@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner - Step 2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            color: #000;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            animation: slideIn 0.8s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            animation: expand 1s ease-in-out;
+        }
+
+        @keyframes expand {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .add-expense, .expense-table {
+            padding: 30px;
+        }
+
+        .btn-primary {
+            background-color: #0096ff;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #00509e;
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #00509e;
+            background-color: #e6f7ff;
+            animation: fadeInTable 0.8s ease-in-out;
+            border-collapse: collapse;
+        }
+
+        @keyframes fadeInTable {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        th {
+            background-color: #00509e;
+            color: white;
+        }
+
+        td {
+            background-color: #e6f7ff;
+            color: black;
+        }
+
+        td:hover {
+            background-color: #cce7ff;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ffeb3b;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideInRight 0.5s ease-in-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .month-navigation {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .month-navigation span {
+            cursor: pointer;
+            padding: 0 25px;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .month-navigation span:hover {
+            color: #00509e;
+        }
+
+        .action-buttons {
+            white-space: nowrap;
+        }
+
+        .btn-sm {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="notification" id="notification"></div>
+
+    <h3 class="text-center mb-5">Add Your Expenses</h3>
+
+    <!-- Add Expense Section -->
+    <div class="section add-expense">
+        <h4 class="text-center">Add Expense</h4>
+        <div class="form-group">
+            <label for="expenseDate">Date:</label>
+            <input type="date" id="expenseDate" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="expenseAmount">Amount (₹):</label>
+            <input type="number" id="expenseAmount" class="form-control" placeholder="Enter expense amount">
+        </div>
+        <div class="form-group">
+            <label for="expenseCategory">Category Name:</label>
+            <input list="categories" id="expenseCategory" class="form-control" placeholder="Enter or select a category">
+            <datalist id="categories">
+                <option value="Rent">
+                <option value="Food">
+                <option value="Movies">
+                <option value="Electricity">
+                <option value="Internet">
+                <option value="Groceries">
+                <option value="Shopping">
+                <option value="Transportation">
+                <option value="Daily necessities">
+                <option value="Maintenance / Repair">
+            </datalist>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addExpense()">Add Expense</button>
+    </div>
+
+    <!-- Expense Table Section -->
+    <div class="section expense-table">
+        <h4 class="text-center">Expenses for <span id="currentMonthYear"></span></h4>
+        <div class="month-navigation">
+            <span onclick="changeMonth(-1)"><<</span>
+            <span id="currentMonthYear"></span>
+            <span onclick="changeMonth(1)">>></span>
+        </div>
+        <table id="expenseTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount (₹)</th>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Expenses will be populated here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let editingIndex = -1;
+
+    function formatDate(dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}-${month}-${year}`;
+    }
+
+    function formatDateForInput(dateStr) {
+        const [day, month, year] = dateStr.split('-');
+        return `${year}-${month}-${day}`;
+    }
+
+    function addExpense() {
+        const expenseDate = document.getElementById('expenseDate').value;
+        const expenseAmount = parseFloat(document.getElementById('expenseAmount').value);
+        const expenseCategory = document.getElementById('expenseCategory').value.trim();
+
+        if (!expenseDate || isNaN(expenseAmount) || expenseAmount <= 0 || !expenseCategory) {
+            alert('Please fill in all the fields correctly.');
+            return;
+        }
+
+        const formattedDate = formatDate(expenseDate);
+        const monthKey = `${currentYear}-${currentMonth}`;
+        let expenses = JSON.parse(localStorage.getItem(`expenses_${monthKey}`)) || [];
+
+        if (editingIndex === -1) {
+
+            const existingIndex = expenses.findIndex(expense => expense.date === formattedDate && expense.categoryName === expenseCategory);
+
+            if (existingIndex >= 0) {
+
+                expenses[existingIndex].amount += expenseAmount;
+                showNotification('Expense updated successfully!');
+            } else {
+                expenses.push({ date: formattedDate, amount: expenseAmount, categoryName: expenseCategory });
+                showNotification('Expense saved successfully!');
+            }
+        } else {
+        
+            expenses[editingIndex] = { date: formattedDate, amount: expenseAmount, categoryName: expenseCategory };
+            showNotification('Expense updated successfully!');
+            editingIndex = -1;
+        }
+
+        localStorage.setItem(`expenses_${monthKey}`, JSON.stringify(expenses));
+        loadExpenses();
+        clearForm();
+    }
+
+    function editExpense(index) {
+        const monthKey = `${currentYear}-${currentMonth}`;
+        const expenses = JSON.parse(localStorage.getItem(`expenses_${monthKey}`)) || [];
+
+        const expense = expenses[index];
+        document.getElementById('expenseDate').value = formatDateForInput(expense.date);
+        document.getElementById('expenseAmount').value = expense.amount;
+        document.getElementById('expenseCategory').value = expense.categoryName;
+
+        editingIndex = index;
+    }
+
+    function deleteExpense(index) {
+        const monthKey = `${currentYear}-${currentMonth}`;
+        let expenses = JSON.parse(localStorage.getItem(`expenses_${monthKey}`)) || [];
+
+        expenses.splice(index, 1);
+
+        localStorage.setItem(`expenses_${monthKey}`, JSON.stringify(expenses));
+
+        showNotification('Expense deleted successfully!');
+        loadExpenses();
+    }
+
+    function loadExpenses() {
+        const monthKey = `${currentYear}-${currentMonth}`;
+        const expenses = JSON.parse(localStorage.getItem(`expenses_${monthKey}`)) || [];
+
+        const tbody = document.querySelector('#expenseTable tbody');
+        tbody.innerHTML = '';
+
+        expenses.sort((a, b) => new Date(b.date.split('-').reverse().join('-')) - new Date(a.date.split('-').reverse().join('-')));
+
+        expenses.forEach((expense, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${expense.date}</td>
+                <td>${expense.amount.toFixed(2)}</td>
+                <td>${expense.categoryName}</td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-primary" onclick="editExpense(${index})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteExpense(${index})">Delete</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    function clearForm() {
+        document.getElementById('expenseDate').value = '';
+        document.getElementById('expenseAmount').value = '';
+        document.getElementById('expenseCategory').value = '';
+        editingIndex = -1;
+    }
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.innerText = message;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    function changeMonth(offset) {
+        currentMonth += offset;
+
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+
+        updateMonthYearDisplay();
+        loadExpenses();
+    }
+
+    function updateMonthYearDisplay() {
+        const monthYearElement = document.getElementById('currentMonthYear');
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthYearElement.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateMonthYearDisplay();
+        loadExpenses();
+    });
+</script>
+
+</body>
+</html>

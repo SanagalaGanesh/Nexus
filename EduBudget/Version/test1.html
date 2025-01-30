@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        line-height: normal;
+      }
+
+      :root {
+        /* fonts */
+        --font-montserrat: Montserrat;
+        --font-poppins: Poppins;
+
+        /* font sizes */
+        --font-size-lg: 18px;
+        --font-size-5xl: 24px;
+        --font-size-6xl: 25px;
+        --font-size-27xl: 46px;
+
+        /* Colors */
+        --color-white: #fff;
+        --color-black: #ffffff;
+
+        /* Border radiuses */
+        --br-6xs: 7px;
+        --br-23xl: 42px;
+      }
+
+      .edubudget,
+      .start-planning-smarter {
+        font-family: var(--font-montserrat);
+        color: var(--color-white);
+        text-align: left;
+      }
+
+      .edubudget {
+        position: absolute;
+        top: -2px;
+        left: 55px;
+        font-size: var(--font-size-5xl);
+      }
+
+      .start-planning-smarter {
+        margin: 0;
+        align-self: stretch;
+        position: relative;
+        font-size: 45px;
+        text-transform: uppercase;
+        font-weight: 700;
+        white-space: pre-wrap;
+        z-index: 0;
+      }
+
+      .to-keep-track {
+        margin: 0;
+      }
+
+      .to-keep-track-container {
+        position: relative;
+        font-size: var(--font-size-lg);
+        text-transform: uppercase;
+        font-weight: 600;
+        font-family: var(--font-montserrat);
+        color: var(--color-white);
+        text-align: left;
+        z-index: 1;
+      }
+
+      .frame-child,
+      .sign-in {
+        cursor: pointer;
+        border: 0;
+        padding: 0;
+      }
+
+      .frame-child {
+        background-color: #3b2667;
+        width: 171px;
+        position: relative;
+        border-radius: 45px;
+        height: 55px;
+        z-index: 2;
+      }
+
+      .sign-in {
+        background-color: transparent;
+        width: 121px;
+        position: absolute;
+        margin: 0 !important;
+        top: 213px;
+        left: 371px;
+        font-size: 31px;
+        text-transform: uppercase;
+        font-family: var(--font-montserrat);
+        color: var(--color-white);
+        text-align: center;
+        display: inline-block;
+        height: 38px;
+        flex-shrink: 0;
+        z-index: 3;
+      }
+
+      .start-planning-smarter-today-parent {
+        position: absolute;
+        top: 339px;
+        left: 474px;
+        width: 862px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 53px;
+      }
+
+      .coin-icon {
+        margin-right: -40px;
+        top: 10px;
+        left: 9px;
+        width: 55px;
+        height: 27px;
+        object-fit: cover;
+        background-color: transparent;
+      }
+
+      .main-menu,
+      .money-and-phone {
+        position: absolute;
+        top: 34px;
+        left: 52px;
+        width: 241px;
+        height: 29px;
+      }
+
+      .money-and-phone {
+        top: 286px;
+        left: 203px;
+        width: 411px;
+        height: 452px;
+        object-fit: cover;
+      }
+
+      .coins-icon,
+      .student-with-backpack-and-text {
+        position: absolute;
+        top: 244px;
+        left: 28px;
+        width: 165px;
+        height: 430px;
+        object-fit: cover;
+      }
+
+      .coins-icon {
+        top: -83px;
+        left: 545px;
+        width: 945px;
+        height: 456px;
+        mix-blend-mode: soft-light;
+      }
+
+      .desktop-1 {
+        margin: 0;
+        width: 100%;
+        position: relative;
+        background: linear-gradient(135deg, #3b2667, #bc78ec);
+        height: 1024px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="desktop-1" id="desktop1">
+      <header class="main-menu">
+        <b class="edubudget">EduBudget</b>
+        <div class="start-planning-smarter-today-parent">
+          <h1 class="start-planning-smarter">START PLANNING SMARTER TODAY!</h1>
+          <div class="to-keep-track-container">
+            <p class="to-keep-track">
+              To keep track of everyday expenses our easy-to-use tool
+            </p>
+            <p class="to-keep-track">
+              helps you organize your money and write your savings grow!!
+            </p>
+          </div>
+          <button class="frame-child" type="button"></button>
+          <button class="sign-in" id="startButton" type="button">START</button>
+        </div>
+        <img class="coin-icon" alt="" src="./logo.png" />
+      </header>
+      <img class="money-and-phone" alt="" src="./mobile.png" />
+      <img class="student-with-backpack-and-text" alt="" src="./babyboy.png" />
+      <img class="coins-icon" alt="" src="./coinsvdo.png" />
+    </form>
+
+    <script>
+      document.getElementById("startButton").addEventListener("click", function() {
+        window.location.href = 'test2.html';
+      });
+    </script>
+  </body>
+</html>

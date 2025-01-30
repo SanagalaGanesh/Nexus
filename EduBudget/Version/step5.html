@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Limits</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff; 
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1000px;
+            margin: 50px auto;
+            gap: 20px;
+        }
+
+        .left, .right {
+            width: 48%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #0000FF; 
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0000CD;
+        }
+
+        .success-message {
+            display: none;
+            color: green;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .set-limit {
+            margin-bottom: 10px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 5px solid #87CEEB;
+        }
+
+        .scrollable-limits {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ffeb3b;
+            color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-message" id="notificationMessage"></div>
+    <div class="container">
+        <div class="left">
+            <h1>Set Limits</h1>
+            <div class="success-message" id="successMessage">Limit set successfully!</div>
+            <form id="limitForm">
+                <div class="form-group">
+                    <label for="category">Category Name:</label>
+                    <input type="text" id="category" name="category" placeholder="Enter category name" required>
+                </div>
+                <div class="form-group">
+                    <label for="month">Month:</label>
+                    <select id="month" name="month" required>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="limit">Set Limit (₹):</label>
+                    <input type="number" id="limit" name="limit" placeholder="Enter limit amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="notification">Notify at (% of limit):</label>
+                    <select id="notification" name="notification">
+                        <option value="10">10%</option>
+                        <option value="30">30%</option>
+                        <option value="50">50%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                    </select>
+                </div>
+                <button type="submit">Set Limit</button>
+            </form>
+        </div>
+        <div class="right">
+            <h1>Limits</h1>
+            <select id="monthFilter">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+            <div class="scrollable-limits" id="limitsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchExpenses() {
+            const response = await fetch('step2.html');
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const expenseTable = doc.querySelector('#expenseTable'); 
+            const expenses = [];
+
+            if (expenseTable) {
+                const rows = expenseTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const category = cells[0].textContent.trim();
+                    const month = cells[1].textContent.trim();
+                    const amount = parseFloat(cells[2].textContent.trim());
+
+                    if (category && month && !isNaN(amount)) {
+                        expenses.push({ category, month, amount });
+                    }
+                });
+            }
+            return expenses;
+        }
+
+        document.getElementById('limitForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const category = document.getElementById('category').value;
+            const month = document.getElementById('month').value;
+            const limit = parseFloat(document.getElementById('limit').value);
+            const notification = parseFloat(document.getElementById('notification').value);
+
+            const storedLimits = JSON.parse(localStorage.getItem('limits')) || {};
+            if (!storedLimits[month]) {
+                storedLimits[month] = [];
+            }
+            storedLimits[month] = storedLimits[month].filter(limitObj => limitObj.category !== category); 
+            storedLimits[month].push({ category, limit, notification });
+            localStorage.setItem('limits', JSON.stringify(storedLimits));
+
+            displayLimits(month);
+
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 2000); 
+
+            document.getElementById('limitForm').reset();
+        });
+
+        async function displayLimits(month) {
+            const limitsContainer = document.getElementById('limitsContainer');
+            limitsContainer.innerHTML = '';
+
+            const storedLimits = JSON.parse(localStorage.getItem('limits')) || {};
+            const limitsForMonth = storedLimits[month] || [];
+
+            limitsForMonth.forEach(limitObj => {
+                const limitDiv = document.createElement('div');
+                limitDiv.className = 'set-limit';
+                limitDiv.innerHTML = `<strong>${limitObj.category} (${month})</strong><br>Limit: ₹${limitObj.limit} - Notify at: ${limitObj.notification}%`;
+                limitsContainer.appendChild(limitDiv);
+            });
+
+            const expenses = await fetchExpenses();
+            limitsForMonth.forEach(limitObj => {
+                checkLimitReached(limitObj.category, month, limitObj.limit, limitObj.notification, expenses);
+            });
+        }
+
+        function checkLimitReached(category, month, limit, notification, expenses) {
+            const relevantExpenses = expenses.filter(expense => expense.category === category && expense.month === month);
+            const totalExpense = relevantExpenses.reduce((acc, expense) => acc + expense.amount, 0);
+            if (totalExpense >= limit) {
+                displayNotification(`The expense for ${category} has reached or exceeded the limit for ${month}.`);
+            } else if (totalExpense >= (limit * notification / 100)) {
+                displayNotification(`The expense for ${category} has reached ${notification}% of the limit for ${month}.`);
+            }
+        }
+
+        function displayNotification(message) {
+            const notificationMessage = document.getElementById('notificationMessage');
+            notificationMessage.textContent = message;
+            notificationMessage.style.display = 'block';
+            setTimeout(() => {
+                notificationMessage.style.display = 'none';
+            }, 5000); 
+        }
+
+        document.getElementById('monthFilter').addEventListener('change', function() {
+            displayLimits(this.value);
+        });
+
+        displayLimits(document.getElementById('monthFilter').value);
+    </script>
+</body>
+</html>
