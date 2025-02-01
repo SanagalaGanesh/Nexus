@@ -9,6 +9,8 @@ public class alphabetCase {
         else{
             System.out.println("UpperCase");
         }
-     }
+      in.close(); 
+    }
+
     
 }
